@@ -1,0 +1,26 @@
+{
+  "name": "clutch-tech",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^16.4.0",
+    "pg": "8.13.1",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "recharts": "3.10.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.10.2",
+    "@types/pg": "8.11.10",
+    "@types/react": "19.0.1",
+    "@types/react-dom": "19.0.2",
+    "baseline-browser-mapping": "^2.11.27",
+    "typescript": "5.7.2"
+  }
+}
