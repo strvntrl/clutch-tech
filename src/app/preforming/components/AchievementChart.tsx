@@ -44,8 +44,8 @@ export default function AchievementChart({ machines }: Props) {
         <Tooltip />
         <Legend verticalAlign="top" height={30} />
         <ReferenceLine y={200} stroke="#c62828" strokeDasharray="4 4" label={{ value: "Target 200", position: "right", fontSize: 11, fill: "#c62828" }} />
-        <Bar dataKey="actual" name="Actual" fill="#2e7d32" radius={[4, 4, 0, 0]} />
-        <Bar dataKey="target" name="Target" fill="#bdbdbd" radius={[4, 4, 0, 0]} />
+        <Bar isAnimationActive={false} dataKey="actual" name="Actual" fill="#2e7d32" radius={[4, 4, 0, 0]} />
+        <Bar isAnimationActive={false} dataKey="target" name="Target" fill="#bdbdbd" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );

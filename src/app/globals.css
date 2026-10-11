@@ -7,3 +7,19 @@ body {
   background: #f1f3f6;
   color: #222;
 }
+
+/* Ticker berjalan (insight dashboard) */
+.ticker-track {
+  display: inline-block;
+  white-space: nowrap;
+  animation: ticker-scroll 60s linear infinite;
+}
+
+.ticker-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes ticker-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}

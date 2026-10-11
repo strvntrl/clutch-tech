@@ -8,7 +8,7 @@ export default function HomePage() {
         <a href="/api/health">/api/health</a>
       </p>
       <p>
-        Lihat dashboard pilot: <a href="/preforming">/preforming</a>
+        Dashboard: <a href="/preforming">/preforming</a> · <a href="/drilling">/drilling</a>
       </p>
     </main>
   );
