@@ -9,11 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "jose": "^6.2.12",
     "next": "^16.4.0",
     "pg": "8.13.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "recharts": "3.10.1"
+    "recharts": "3.10.1",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
     "@types/node": "22.10.2",
