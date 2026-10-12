@@ -2,6 +2,7 @@ import type { PreformingKpi } from "@/types/preforming";
 
 interface Props {
   kpi: PreformingKpi | null;
+  unit?: string; // satuan di samping angka, default "PCS"
 }
 
 const cardStyle: React.CSSProperties = {
@@ -24,7 +25,7 @@ const bodyStyle: React.CSSProperties = {
   padding: "16px 14px",
 };
 
-export default function KpiCards({ kpi }: Props) {
+export default function KpiCards({ kpi, unit = "PCS" }: Props) {
   const plan = kpi?.plan ?? 0;
   const actual = kpi?.actual ?? 0;
   const gap = kpi?.gap ?? 0;
@@ -38,7 +39,7 @@ export default function KpiCards({ kpi }: Props) {
           <span style={{ fontSize: 28, fontWeight: 800, color: "#4a148c" }}>
             {plan}
           </span>{" "}
-          <span style={{ fontSize: 13, color: "#888" }}>PCS</span>
+          <span style={{ fontSize: 13, color: "#888" }}>{unit}</span>
         </div>
       </div>
 
@@ -48,7 +49,7 @@ export default function KpiCards({ kpi }: Props) {
           <span style={{ fontSize: 28, fontWeight: 800, color: "#2e7d32" }}>
             {actual}
           </span>{" "}
-          <span style={{ fontSize: 13, color: "#888" }}>PCS</span>
+          <span style={{ fontSize: 13, color: "#888" }}>{unit}</span>
         </div>
       </div>
 
@@ -58,7 +59,7 @@ export default function KpiCards({ kpi }: Props) {
           <span style={{ fontSize: 28, fontWeight: 800, color: "#c62828" }}>
             {gap}
           </span>{" "}
-          <span style={{ fontSize: 13, color: "#888" }}>PCS</span>
+          <span style={{ fontSize: 13, color: "#888" }}>{unit}</span>
         </div>
       </div>
 
