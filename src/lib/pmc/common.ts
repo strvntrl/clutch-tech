@@ -6,12 +6,12 @@ import type { UserRole } from "@/lib/session";
 import type { ShiftWindow } from "@/lib/shift";
 import type { PmcLevel, PmcPermissions } from "@/types/pmc";
 
-export const PRIVILEGED_ROLES: UserRole[] = ["supervisor", "ast. manager"];
+export const PRIVILEGED_ROLES: UserRole[] = ["supervisor", "manager"];
 
 export const LEVEL_ROLE: Record<PmcLevel, UserRole> = {
   foreman: "foreman",
   supervisor: "supervisor",
-  "ast. manager": "ast. manager",
+  "manager": "manager",
 };
 
 export const EDIT_TOLERANCE_SEC = 30 * 60;
@@ -77,7 +77,7 @@ export function computePermissions(role: UserRole, win: ShiftWindow, now: number
     canEdit = true;
   } else {
     reason =
-      "Shift ini sudah berakhir. Hanya Supervisor / Ast. Manager yang dapat mengubah data shift lampau.";
+      "Shift ini sudah berakhir. Hanya Supervisor / manager yang dapat mengubah data shift lampau.";
   }
 
   const canApprove = {} as Record<PmcLevel, boolean>;

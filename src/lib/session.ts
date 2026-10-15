@@ -5,7 +5,7 @@ const SESSION_DURATION_SECONDS = 60 * 60 * 12; // 12 jam, cover 1 shift penuh
 export const SESSION_COOKIE_NAME = "ct_session";
 export const SESSION_MAX_AGE = SESSION_DURATION_SECONDS;
 
-export type UserRole = "operator" | "foreman" | "supervisor" | "ast. manager";
+export type UserRole = "operator" | "foreman" | "supervisor" | "manager";
 
 export interface SessionPayload {
   userId: number;

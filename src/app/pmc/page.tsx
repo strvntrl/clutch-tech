@@ -31,10 +31,10 @@ export default async function PmcIndexPage() {
           DRILLING
           <div style={{ fontSize: 12, fontWeight: 400, color: "#555", marginTop: 6 }}>Form laporan harian drilling</div>
         </a>
-        <div style={{ ...cardStyle, color: "#90a4ae", cursor: "not-allowed" }}>
+        <a href="/pmc/hotpress" style={cardStyle}>
           HOTPRESS
-          <div style={{ fontSize: 12, fontWeight: 400, marginTop: 6 }}>Segera hadir</div>
-        </div>
+          <div style={{ fontSize: 12, fontWeight: 400, color: "#555", marginTop: 6 }}>Form laporan harian hotpress</div>
+        </a>
         <div style={{ ...cardStyle, color: "#90a4ae", cursor: "not-allowed" }}>
           PREFORMING
           <div style={{ fontSize: 12, fontWeight: 400, marginTop: 6 }}>Segera hadir</div>
