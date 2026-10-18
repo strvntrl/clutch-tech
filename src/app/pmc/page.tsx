@@ -35,10 +35,10 @@ export default async function PmcIndexPage() {
           HOTPRESS
           <div style={{ fontSize: 12, fontWeight: 400, color: "#555", marginTop: 6 }}>Form laporan harian hotpress</div>
         </a>
-        <div style={{ ...cardStyle, color: "#90a4ae", cursor: "not-allowed" }}>
-          PREFORMING
-          <div style={{ fontSize: 12, fontWeight: 400, marginTop: 6 }}>Segera hadir</div>
-        </div>
+        <a href="/report" style={cardStyle}>
+          LAPORAN
+          <div style={{ fontSize: 12, fontWeight: 400, color: "#555", marginTop: 6 }}>Laporan produksi, grafik, dan analisis</div>
+        </a>
       </div>
     </main>
   );
