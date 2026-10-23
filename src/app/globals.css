@@ -1,3 +1,13 @@
+:root {
+  --ct-blue-900: #072a63;
+  --ct-blue-800: #0b3a84; /* biru navy logo */
+  --ct-blue-600: #0a4bb5; /* biru terang logo */
+  --ct-blue-100: #e6eef9;
+  --ct-red-600: #e30613; /* merah logo */
+  --ct-red-700: #bf0a12;
+  --ct-red-100: #fdecec;
+}
+
 * {
   box-sizing: border-box;
 }
