@@ -1,5 +1,5 @@
 import ReportView from "./ReportView";
-import UserBar from "@/components/UserBar";
+import NavBar from "@/components/NavBar";
 import { getCurrentUser } from "@/lib/get-current-user";
 
 export const metadata = {
@@ -11,11 +11,7 @@ export default async function ReportPage() {
 
   return (
     <>
-      {user && (
-        <div className="no-print" style={{ display: "flex", justifyContent: "flex-end", padding: "12px 20px 0" }}>
-          <UserBar fullName={user.fullName} role={user.role} />
-        </div>
-      )}
+      {user && <NavBar fullName={user.fullName} role={user.role} />}
       <ReportView />
     </>
   );

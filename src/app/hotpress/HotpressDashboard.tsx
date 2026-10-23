@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import KpiCards from "@/app/preforming/components/KpiCards";
+import MonitorHeader from "@/components/MonitorHeader";
 import { InsightsList, InsightsTicker } from "@/app/drilling/components/InsightsPanel";
 import MachineCard from "./components/MachineCard";
 import StatusSummary, { type StatusKey } from "./components/StatusSummary";
@@ -30,12 +31,6 @@ const sectionTitle: React.CSSProperties = {
   margin: "0 0 12px",
   color: "#0d47a1",
   letterSpacing: 0.5,
-};
-
-const inputStyle: React.CSSProperties = {
-  padding: "6px 8px",
-  borderRadius: 6,
-  border: "1px solid #ccc",
 };
 
 export default function HotpressDashboard() {
@@ -153,44 +148,37 @@ export default function HotpressDashboard() {
         fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
       }}
     >
-      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
-        <h1 style={{ fontSize: 22, margin: 0 }}>Hotpress Dashboard</h1>
-
-        <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-          <label style={{ fontSize: 13, display: "flex", gap: 6, alignItems: "center" }}>
-            Tanggal
-            <input type="date" value={date} max={sys.date} onChange={(e) => onDateChange(e.target.value)} style={inputStyle} />
-          </label>
-          <label style={{ fontSize: 13, display: "flex", gap: 6, alignItems: "center" }}>
-            Shift
-            <select value={shift} onChange={(e) => setShift(e.target.value)} style={inputStyle}>
-              {SHIFTS.filter((s) => s.no <= maxShift).map((s) => (
-                <option key={s.value} value={s.value}>
-                  {s.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <span
-            style={{
-              fontSize: 11,
-              fontWeight: 700,
-              padding: "4px 10px",
-              borderRadius: 14,
-              background: history ? "#eceff1" : "#e8f5e9",
-              color: history ? "#546e7a" : "#2e7d32",
-            }}
-          >
-            {history ? "HISTORY" : "● LIVE"}
-          </span>
-          <button
-            onClick={() => setShowInsights((v) => !v)}
-            style={{ padding: "6px 14px", borderRadius: 6, border: "1px solid #0d47a1", background: showInsights ? "#0d47a1" : "#fff", color: showInsights ? "#fff" : "#0d47a1", fontWeight: 700, fontSize: 12, cursor: "pointer" }}
-          >
-            DASHBOARD INSIGHTS
-          </button>
-        </div>
-      </header>
+      <MonitorHeader
+        area="hotpress"
+        date={date}
+        onDateChange={onDateChange}
+        maxDate={sys.date}
+        shift={shift}
+        onShiftChange={setShift}
+        shiftOptions={SHIFTS.filter((s) => s.no <= maxShift)}
+        extra={
+          <>
+            <span
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                padding: "4px 10px",
+                borderRadius: 14,
+                background: history ? "#eceff1" : "#e8f5e9",
+                color: history ? "#546e7a" : "#2e7d32",
+              }}
+            >
+              {history ? "HISTORY" : "● LIVE"}
+            </span>
+            <button
+              onClick={() => setShowInsights((v) => !v)}
+              style={{ padding: "6px 14px", borderRadius: 6, border: "1px solid #0d47a1", background: showInsights ? "#0d47a1" : "#fff", color: showInsights ? "#fff" : "#0d47a1", fontWeight: 700, fontSize: 12, cursor: "pointer" }}
+            >
+              DASHBOARD INSIGHTS
+            </button>
+          </>
+        }
+      />
 
       <div
         style={{

@@ -1,5 +1,4 @@
 import PreformingDashboard from "./PreformingDashboard";
-import UserBar from "@/components/UserBar";
 import { getCurrentUser } from "@/lib/get-current-user";
 
 export const metadata = {
@@ -11,11 +10,6 @@ export default async function PreformingPage() {
 
   return (
     <>
-      {user && (
-        <div style={{ display: "flex", justifyContent: "flex-end", padding: "12px 20px 0" }}>
-          <UserBar fullName={user.fullName} role={user.role} />
-        </div>
-      )}
       <PreformingDashboard />
     </>
   );

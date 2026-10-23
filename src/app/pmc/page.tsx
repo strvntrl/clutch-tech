@@ -1,4 +1,4 @@
-import UserBar from "@/components/UserBar";
+import NavBar from "@/components/NavBar";
 import { getCurrentUser } from "@/lib/get-current-user";
 
 export const metadata = { title: "PMC | Clutch Tech" };
@@ -20,10 +20,11 @@ export default async function PmcIndexPage() {
   const user = await getCurrentUser();
 
   return (
+    <>
+    {user && <NavBar fullName={user.fullName} role={user.role} />}
     <main style={{ padding: 24, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
         <h1 style={{ fontSize: 22, margin: 0 }}>PMC - Laporan Produksi Harian</h1>
-        {user && <UserBar fullName={user.fullName} role={user.role} />}
       </div>
 
       <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
@@ -41,5 +42,6 @@ export default async function PmcIndexPage() {
         </a>
       </div>
     </main>
+    </>
   );
 }

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import KpiCards from "./components/KpiCards";
 import MachineGrid from "./components/MachineGrid";
+import MonitorHeader from "@/components/MonitorHeader";
 import AchievementChart from "./components/AchievementChart";
 import {
   SHIFT_OPTIONS,
@@ -60,43 +61,14 @@ export default function PreformingDashboard() {
         fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
       }}
     >
-      <header
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          flexWrap: "wrap",
-          gap: 12,
-        }}
-      >
-        <h1 style={{ fontSize: 22, margin: 0 }}>Preforming Dashboard</h1>
-
-        <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-          <label style={{ fontSize: 13, display: "flex", gap: 6, alignItems: "center" }}>
-            Tanggal
-            <input
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              style={{ padding: "6px 8px", borderRadius: 6, border: "1px solid #ccc" }}
-            />
-          </label>
-          <label style={{ fontSize: 13, display: "flex", gap: 6, alignItems: "center" }}>
-            Shift
-            <select
-              value={shift}
-              onChange={(e) => setShift(e.target.value)}
-              style={{ padding: "6px 8px", borderRadius: 6, border: "1px solid #ccc" }}
-            >
-              {SHIFT_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-      </header>
+      <MonitorHeader
+        area="preforming"
+        date={date}
+        onDateChange={setDate}
+        shift={shift}
+        onShiftChange={setShift}
+        shiftOptions={SHIFT_OPTIONS}
+      />
 
       <div
         style={{

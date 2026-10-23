@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import KpiCards from "@/app/preforming/components/KpiCards";
+import MonitorHeader from "@/components/MonitorHeader";
 import AchievementTable from "./components/AchievementTable";
 import ShiftTrendChart from "./components/ShiftTrendChart";
 import HistoricalPanel from "./components/HistoricalPanel";
@@ -31,7 +32,7 @@ const card: React.CSSProperties = {
 };
 
 const inputStyle: React.CSSProperties = {
-  padding: "6px 8px",
+  padding: "6px 10px",
   borderRadius: 6,
   border: "1px solid #ccc",
 };
@@ -163,24 +164,15 @@ export default function DrillingDashboard() {
         fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
       }}
     >
-      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
-        <h1 style={{ fontSize: 22, margin: 0 }}>Drilling Dashboard</h1>
-
-        <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-          <label style={{ fontSize: 13, display: "flex", gap: 6, alignItems: "center" }}>
-            Tanggal
-            <input type="date" value={date} max={sys.date} onChange={(e) => onDateChange(e.target.value)} style={inputStyle} />
-          </label>
-          <label style={{ fontSize: 13, display: "flex", gap: 6, alignItems: "center" }}>
-            Shift
-            <select value={shift} onChange={(e) => setShift(e.target.value)} style={inputStyle}>
-              {SHIFTS.filter((s) => s.no <= maxShift).map((s) => (
-                <option key={s.value} value={s.value}>
-                  {s.label}
-                </option>
-              ))}
-            </select>
-          </label>
+      <MonitorHeader
+        area="drilling"
+        date={date}
+        onDateChange={onDateChange}
+        maxDate={sys.date}
+        shift={shift}
+        onShiftChange={setShift}
+        shiftOptions={SHIFTS.filter((s) => s.no <= maxShift)}
+        extra={
           <span
             style={{
               fontSize: 11,
@@ -193,8 +185,8 @@ export default function DrillingDashboard() {
           >
             {history ? "HISTORY" : "● LIVE"}
           </span>
-        </div>
-      </header>
+        }
+      />
 
       <div
         style={{
