@@ -1,103 +1,125 @@
 "use client";
 
-import { useState } from "react";
+import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { IBM_Plex_Sans } from "next/font/google";
-import logo from "@/assets/logo-perusahaan.webp";
+import pmcLogo from "@/assets/logo-pmc.webp";
+import drillingLogo from "@/assets/logo-drilling.webp";
+import hotpressLogo from "@/assets/logo-hotpress.webp";
+import monitor from "./MonitorHeader.module.css"; // tampilan sama persis dengan header dashboard monitor
+import { DateBox, ShiftBox, TimeBox } from "./HeaderBoxes";
+import UserStatus from "./UserStatus";
 import styles from "./NavBar.module.css";
 
 const plex = IBM_Plex_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
+
+interface ShiftOption {
+  value: string;
+  label: string;
+}
+
+/** Filter tanggal + shift (hanya untuk halaman form PMC). */
+export interface NavFilters {
+  date: string;
+  onDateChange: (date: string) => void;
+  maxDate?: string;
+  shift: string;
+  onShiftChange: (shift: string) => void;
+  shiftOptions: readonly ShiftOption[];
+}
 
 interface Props {
   fullName: string;
   role: string;
+  /** Kalau diisi, kotak tanggal dan shift tampil di navbar. */
+  filters?: NavFilters;
+  /** Elemen tambahan di bawah judul, mis. chip status. */
+  extra?: ReactNode;
+  /** Dipakai saat navbar ada di dalam wadah yang sudah punya padding sendiri. */
+  embedded?: boolean;
 }
 
-const AREA_LINKS = [
-  { href: "/preforming", label: "Preforming" },
-  { href: "/drilling", label: "Drilling" },
-  { href: "/hotpress", label: "Hotpress" },
-];
+/** Urutan halaman PMC untuk tombol panah kiri/kanan (berputar). */
+const PAGES = [
+  { href: "/pmc", prefix: "/pmc", exact: true, title: "PMC", label: "Menu PMC", logo: pmcLogo },
+  { href: "/pmc/drilling", prefix: "/pmc/drilling", title: "PMC Drilling", label: "Drilling", logo: drillingLogo },
+  { href: "/pmc/hotpress", prefix: "/pmc/hotpress", title: "PMC Hotpress", label: "Hotpress", logo: hotpressLogo },
+  { href: "/report", prefix: "/report", title: "PMC Laporan", label: "Laporan", logo: pmcLogo },
+] as const;
 
-// Halaman laporan dibuka dari menu PMC, jadi ikut dianggap bagian PMC.
-const PMC_PREFIXES = ["/pmc", "/report"];
-
-function isActive(pathname: string, href: string) {
-  return pathname === href || pathname.startsWith(`${href}/`);
+function findPageIndex(pathname: string): number {
+  const i = PAGES.findIndex((p) =>
+    "exact" in p ? pathname === p.prefix : pathname === p.prefix || pathname.startsWith(`${p.prefix}/`)
+  );
+  return i === -1 ? 0 : i;
 }
 
-export default function NavBar({ fullName, role }: Props) {
-  const router = useRouter();
+export default function NavBar({ fullName, role, filters, extra, embedded = false }: Props) {
   const pathname = usePathname();
-  const [loggingOut, setLoggingOut] = useState(false);
 
-  const pmcActive = PMC_PREFIXES.some((p) => isActive(pathname, p));
-
-  async function handleLogout() {
-    if (loggingOut) return;
-    setLoggingOut(true);
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-    } finally {
-      router.push("/login");
-      router.refresh();
-    }
-  }
+  const index = findPageIndex(pathname);
+  const current = PAGES[index];
+  const prev = PAGES[(index - 1 + PAGES.length) % PAGES.length];
+  const next = PAGES[(index + 1) % PAGES.length];
 
   return (
-    <header className={`${plex.className} ${styles.bar}`}>
-      <div className={styles.inner}>
-        <Link href="/" className={styles.brand} aria-label="Beranda Clutch Tech">
-          <Image src={logo} alt="Clutch Tech" className={styles.logo} sizes="120px" priority />
+    <header
+      className={`${plex.className} ${monitor.header} ${styles.bar} ${embedded ? styles.embedded : ""}`}
+    >
+      {/* Kiri: logo + filter tanggal */}
+      <div className={monitor.left}>
+        <Link href="/" className={monitor.logoLink} aria-label="Kembali ke beranda">
+          <Image src={current.logo} alt={`Logo ${current.label}`} className={monitor.logo} sizes="72px" priority />
         </Link>
+        {filters && (
+          <DateBox date={filters.date} onChange={filters.onDateChange} max={filters.maxDate} />
+        )}
+      </div>
 
-        <nav className={styles.nav} aria-label="Navigasi utama">
-          <ul className={styles.links}>
-            {AREA_LINKS.map((l) => {
-              const active = isActive(pathname, l.href);
-              return (
-                <li key={l.href}>
-                  <Link
-                    href={l.href}
-                    className={`${styles.link} ${active ? styles.linkActive : ""}`}
-                    aria-current={active ? "page" : undefined}
-                  >
-                    {l.label}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-
+      {/* Tengah: panah pindah halaman + judul */}
+      <div className={monitor.center}>
+        <div className={monitor.titleRow}>
           <Link
-            href="/pmc"
-            className={`${styles.pmc} ${pmcActive ? styles.pmcActive : ""}`}
-            aria-current={pmcActive ? "page" : undefined}
+            href={prev.href}
+            className={monitor.arrow}
+            aria-label={`Halaman sebelumnya: ${prev.label}`}
+            title={prev.label}
           >
-            PMC
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+              <path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </Link>
-        </nav>
-
-        <div className={styles.user}>
-          <span className={styles.userText}>
-            <span className={styles.userName}>{fullName}</span>
-            <span className={styles.userRole}>{role}</span>
-          </span>
-          <button
-            type="button"
-            className={styles.logout}
-            onClick={handleLogout}
-            disabled={loggingOut}
+          <span className={monitor.title}>{current.title}</span>
+          <Link
+            href={next.href}
+            className={monitor.arrow}
+            aria-label={`Halaman berikutnya: ${next.label}`}
+            title={next.label}
           >
-            {loggingOut ? "Keluar..." : "Logout"}
-          </button>
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+              <path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </Link>
         </div>
+        {extra && <div className={monitor.extra}>{extra}</div>}
+      </div>
+
+      {/* Kanan: tombol monitoring + jam + shift + user */}
+      <div className={monitor.right}>
+        <Link href="/preforming" className={monitor.pmc}>
+          Monitoring
+        </Link>
+        <TimeBox />
+        {filters && (
+          <ShiftBox shift={filters.shift} onChange={filters.onShiftChange} options={filters.shiftOptions} />
+        )}
+        <UserStatus user={{ fullName, role }} />
       </div>
     </header>
   );

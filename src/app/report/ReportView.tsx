@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { GRANULARITIES, REPORT_STAGE_CODES, isReportError, type Granularity, type ReportResponse, type ReportStageCode } from "@/types/report";
 import StageSection from "./components/StageSection";
+import PmcTitle from "@/components/PmcTitle";
+import pmcLogo from "@/assets/logo-pmc.webp";
 
 const STAGE_LABEL: Record<ReportStageCode, string> = { DRILLING: "Drilling", HOTPRESS: "Hot Press" };
 
@@ -68,10 +70,7 @@ export default function ReportView() {
   return (
     <div style={{ padding: 20, display: "flex", flexDirection: "column", gap: 18, fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>
       <header>
-        <h1 style={{ fontSize: 22, margin: 0 }}>Laporan Produksi</h1>
-        <a href="/pmc" className="no-print" style={{ fontSize: 12, color: "#1565c0" }}>
-          ← Menu PMC
-        </a>
+        <PmcTitle title="Laporan Produksi" crumb="Laporan" logo={pmcLogo} />
       </header>
 
       <form

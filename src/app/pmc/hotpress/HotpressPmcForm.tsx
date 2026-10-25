@@ -2,6 +2,10 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { SHIFTS, getSystemShiftState, maxSelectableShift } from "@/lib/shift-ui";
+import PmcTitle from "@/components/PmcTitle";
+import NavBar from "@/components/NavBar";
+import type { HeaderUser } from "@/components/UserStatus";
+import hotpressLogo from "@/assets/logo-hotpress.webp";
 import { PMC_LEVELS, isPmcError, type PartSuggestion, type PmcLevel } from "@/types/pmc";
 import type { HpFormResponse, HpRow, HpSaveRow } from "@/types/pmc-hotpress";
 import { buildHpRows, sameHpRow, toCount, toHpSaveRow } from "./helpers";
@@ -31,12 +35,6 @@ const td: React.CSSProperties = {
   verticalAlign: "middle",
 };
 
-const selectInput: React.CSSProperties = {
-  padding: "6px 8px",
-  borderRadius: 6,
-  border: "1px solid #ccc",
-};
-
 function inp(editable: boolean, invalid = false): React.CSSProperties {
   return {
     width: "100%",
@@ -57,7 +55,7 @@ const PRINT_CSS = `
   table { font-size: 9px !important; }
 }`;
 
-export default function HotpressPmcForm() {
+export default function HotpressPmcForm({ user }: { user: HeaderUser | null }) {
   const initial = getSystemShiftState();
   const [date, setDate] = useState(initial.date);
   const [shift, setShift] = useState(initial.shift);
@@ -330,6 +328,28 @@ export default function HotpressPmcForm() {
       }}
     >
       <style>{PRINT_CSS}</style>
+      {user && (
+        <NavBar
+          fullName={user.fullName}
+          role={user.role}
+          embedded
+          filters={{
+            date,
+            onDateChange,
+            maxDate: sys.date,
+            shift,
+            onShiftChange,
+            shiftOptions: SHIFTS.filter((s) => s.no <= maxShift),
+          }}
+          extra={
+            statusChip ? (
+              <span style={{ fontSize: 11, fontWeight: 700, padding: "4px 10px", borderRadius: 14, background: statusChip.bg, color: statusChip.color }}>
+                {statusChip.text}
+              </span>
+            ) : null
+          }
+        />
+      )}
       <datalist id="hp-cf-list">
         {suggestions.map((p) => (
           <option key={p.part_number} value={p.part_number}>
@@ -348,35 +368,8 @@ export default function HotpressPmcForm() {
         ))}
       </datalist>
 
-      <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
-        <div>
-          <h1 style={{ fontSize: 22, margin: 0 }}>Laporan Harian Hotpress</h1>
-          <a href="/pmc" className="no-print" style={{ fontSize: 12, color: "#1565c0" }}>
-            ← Menu PMC
-          </a>
-        </div>
-
-        <div className="no-print" style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-          <label style={{ fontSize: 13, display: "flex", gap: 6, alignItems: "center" }}>
-            Tanggal
-            <input type="date" value={date} max={sys.date} onChange={(e) => onDateChange(e.target.value)} style={selectInput} />
-          </label>
-          <label style={{ fontSize: 13, display: "flex", gap: 6, alignItems: "center" }}>
-            Shift
-            <select value={shift} onChange={(e) => onShiftChange(e.target.value)} style={selectInput}>
-              {SHIFTS.filter((s) => s.no <= maxShift).map((s) => (
-                <option key={s.value} value={s.value}>
-                  {s.label}
-                </option>
-              ))}
-            </select>
-          </label>
-          {statusChip && (
-            <span style={{ fontSize: 11, fontWeight: 700, padding: "4px 10px", borderRadius: 14, background: statusChip.bg, color: statusChip.color }}>
-              {statusChip.text}
-            </span>
-          )}
-        </div>
+      <header>
+        <PmcTitle title="Laporan Harian Hotpress" crumb="Hotpress" logo={hotpressLogo} />
       </header>
 
       {perms && !perms.canEdit && (
