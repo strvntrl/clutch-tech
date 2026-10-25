@@ -1,13 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import KpiCards from "./components/KpiCards";
 import MachineGrid from "./components/MachineGrid";
 import MonitorHeader from "@/components/MonitorHeader";
 import AchievementChart from "./components/AchievementChart";
 import {
-  SHIFT_OPTIONS,
-  getCurrentShiftState,
+  SHIFTS,
+  getSystemShiftState,
+  isHistoryView,
+  maxSelectableShift,
+} from "@/lib/shift-ui";
+import {
   isPreformingError,
   type PreformingApiResponse,
   type PreformingSuccessResponse,
@@ -16,13 +20,15 @@ import {
 const REFRESH_MS = 10_000;
 
 export default function PreformingDashboard() {
-  const initial = getCurrentShiftState();
+  const initial = getSystemShiftState();
   const [date, setDate] = useState(initial.date);
   const [shift, setShift] = useState(initial.shift);
 
   const [data, setData] = useState<PreformingSuccessResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const sysRef = useRef(initial); // hari produksi + shift "live" terakhir yang kita ketahui
 
   const load = useCallback(async () => {
     try {
@@ -42,12 +48,42 @@ export default function PreformingDashboard() {
     }
   }, [date, shift]);
 
+  // Muat data tiap kali tanggal/shift berubah
   useEffect(() => {
     setLoading(true);
     load();
-    const id = setInterval(load, REFRESH_MS);
-    return () => clearInterval(id);
   }, [load]);
+
+  // Polling + deteksi pergantian shift. Mode riwayat tidak perlu polling.
+  useEffect(() => {
+    const id = setInterval(() => {
+      const sys = getSystemShiftState();
+      const prev = sysRef.current;
+      sysRef.current = sys;
+
+      if (sys.date !== prev.date || sys.shift !== prev.shift) {
+        // Kalau pengguna sedang mengikuti shift live, pindah ke shift baru
+        if (date === prev.date && shift === prev.shift) {
+          setDate(sys.date);
+          setShift(sys.shift);
+        }
+        return;
+      }
+      if (!isHistoryView(date, shift)) load();
+    }, REFRESH_MS);
+    return () => clearInterval(id);
+  }, [date, shift, load]);
+
+  const sys = getSystemShiftState();
+  const history = isHistoryView(date, shift);
+  const maxShift = maxSelectableShift(date);
+
+  function onDateChange(newDate: string) {
+    if (!newDate) return;
+    const max = maxSelectableShift(newDate);
+    setDate(newDate);
+    if (parseInt(shift.replace("Shift-", ""), 10) > max) setShift(`Shift-${max}`);
+  }
 
   const ticker = data?.ticker_data?.[0] ?? "Loading data...";
 
@@ -64,10 +100,25 @@ export default function PreformingDashboard() {
       <MonitorHeader
         area="preforming"
         date={date}
-        onDateChange={setDate}
+        onDateChange={onDateChange}
+        maxDate={sys.date}
         shift={shift}
         onShiftChange={setShift}
-        shiftOptions={SHIFT_OPTIONS}
+        shiftOptions={SHIFTS.filter((s) => s.no <= maxShift)}
+        extra={
+          <span
+            style={{
+              fontSize: 11,
+              fontWeight: 700,
+              padding: "4px 10px",
+              borderRadius: 14,
+              background: history ? "#eceff1" : "#e8f5e9",
+              color: history ? "#546e7a" : "#2e7d32",
+            }}
+          >
+            {history ? "HISTORY" : "● LIVE"}
+          </span>
+        }
       />
 
       <div
