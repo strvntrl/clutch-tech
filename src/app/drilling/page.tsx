@@ -9,8 +9,8 @@ export default async function DrillingPage() {
   const user = await getCurrentUser();
 
   return (
-    <>
-      <DrillingDashboard />
-    </>
+    <DrillingDashboard
+      user={user ? { fullName: user.fullName, role: user.role } : null}
+    />
   );
 }

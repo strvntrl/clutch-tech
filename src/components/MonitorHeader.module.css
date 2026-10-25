@@ -211,7 +211,7 @@
 
 /* ---------- Layar lebar: satu baris, judul di tengah ---------- */
 
-@media (min-width: 1100px) {
+@media (min-width: 1360px) {
   .header {
     flex-wrap: nowrap;
   }

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import KpiCards from "./components/KpiCards";
 import MachineGrid from "./components/MachineGrid";
 import MonitorHeader from "@/components/MonitorHeader";
+import type { HeaderUser } from "@/components/UserStatus";
 import AchievementChart from "./components/AchievementChart";
 import {
   SHIFTS,
@@ -19,7 +20,7 @@ import {
 
 const REFRESH_MS = 10_000;
 
-export default function PreformingDashboard() {
+export default function PreformingDashboard({ user }: { user: HeaderUser | null }) {
   const initial = getSystemShiftState();
   const [date, setDate] = useState(initial.date);
   const [shift, setShift] = useState(initial.shift);
@@ -105,6 +106,7 @@ export default function PreformingDashboard() {
         shift={shift}
         onShiftChange={setShift}
         shiftOptions={SHIFTS.filter((s) => s.no <= maxShift)}
+        user={user}
         extra={
           <span
             style={{

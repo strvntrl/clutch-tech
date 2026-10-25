@@ -9,8 +9,8 @@ export default async function PreformingPage() {
   const user = await getCurrentUser();
 
   return (
-    <>
-      <PreformingDashboard />
-    </>
+    <PreformingDashboard
+      user={user ? { fullName: user.fullName, role: user.role } : null}
+    />
   );
 }

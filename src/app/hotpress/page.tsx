@@ -9,8 +9,8 @@ export default async function HotpressPage() {
   const user = await getCurrentUser();
 
   return (
-    <>
-      <HotpressDashboard />
-    </>
+    <HotpressDashboard
+      user={user ? { fullName: user.fullName, role: user.role } : null}
+    />
   );
 }

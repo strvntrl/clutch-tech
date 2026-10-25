@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import KpiCards from "@/app/preforming/components/KpiCards";
 import MonitorHeader from "@/components/MonitorHeader";
+import type { HeaderUser } from "@/components/UserStatus";
 import AchievementTable from "./components/AchievementTable";
 import ShiftTrendChart from "./components/ShiftTrendChart";
 import HistoricalPanel from "./components/HistoricalPanel";
@@ -37,7 +38,7 @@ const inputStyle: React.CSSProperties = {
   border: "1px solid #ccc",
 };
 
-export default function DrillingDashboard() {
+export default function DrillingDashboard({ user }: { user: HeaderUser | null }) {
   const initial = getSystemShiftState();
   const [date, setDate] = useState(initial.date);
   const [shift, setShift] = useState(initial.shift);
@@ -172,6 +173,7 @@ export default function DrillingDashboard() {
         shift={shift}
         onShiftChange={setShift}
         shiftOptions={SHIFTS.filter((s) => s.no <= maxShift)}
+        user={user}
         extra={
           <span
             style={{

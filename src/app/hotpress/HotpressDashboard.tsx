@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import KpiCards from "@/app/preforming/components/KpiCards";
 import MonitorHeader from "@/components/MonitorHeader";
+import type { HeaderUser } from "@/components/UserStatus";
 import { InsightsList, InsightsTicker } from "@/app/drilling/components/InsightsPanel";
 import MachineCard from "./components/MachineCard";
 import StatusSummary, { type StatusKey } from "./components/StatusSummary";
@@ -33,7 +34,7 @@ const sectionTitle: React.CSSProperties = {
   letterSpacing: 0.5,
 };
 
-export default function HotpressDashboard() {
+export default function HotpressDashboard({ user }: { user: HeaderUser | null }) {
   const initial = getSystemShiftState();
   const [date, setDate] = useState(initial.date);
   const [shift, setShift] = useState(initial.shift);
@@ -156,6 +157,7 @@ export default function HotpressDashboard() {
         shift={shift}
         onShiftChange={setShift}
         shiftOptions={SHIFTS.filter((s) => s.no <= maxShift)}
+        user={user}
         extra={
           <>
             <span

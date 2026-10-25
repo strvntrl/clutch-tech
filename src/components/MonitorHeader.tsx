@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { IBM_Plex_Sans } from "next/font/google";
 import preformingLogo from "@/assets/logo-preforming.webp";
 import drillingLogo from "@/assets/logo-drilling.webp";
 import hotpressLogo from "@/assets/logo-hotpress.webp";
+import { DateBox, ShiftBox, TimeBox } from "./HeaderBoxes";
+import UserStatus, { type HeaderUser } from "./UserStatus";
 import styles from "./MonitorHeader.module.css";
 
 const plex = IBM_Plex_Sans({
@@ -38,20 +40,10 @@ interface Props {
   shift: string;
   onShiftChange: (shift: string) => void;
   shiftOptions: readonly ShiftOption[];
+  /** User yang sedang login (nama, role, dan tombol logout). */
+  user?: HeaderUser | null;
   /** Elemen tambahan di bawah judul, mis. badge LIVE atau tombol insights. */
   extra?: ReactNode;
-}
-
-function formatClock(d: Date): string {
-  return new Intl.DateTimeFormat("id-ID", {
-    timeZone: "Asia/Jakarta",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hourCycle: "h23",
-  })
-    .format(d)
-    .replace(/:/g, ".");
 }
 
 export default function MonitorHeader({
@@ -62,18 +54,9 @@ export default function MonitorHeader({
   shift,
   onShiftChange,
   shiftOptions,
+  user,
   extra,
 }: Props) {
-  // null di render pertama supaya HTML server dan klien sama (cegah hydration mismatch)
-  const [clock, setClock] = useState<string | null>(null);
-
-  useEffect(() => {
-    const tick = () => setClock(formatClock(new Date()));
-    tick();
-    const id = setInterval(tick, 1000);
-    return () => clearInterval(id);
-  }, []);
-
   const index = AREAS.findIndex((a) => a.key === area);
   const current = AREAS[index];
   const prev = AREAS[(index - 1 + AREAS.length) % AREAS.length];
@@ -92,16 +75,7 @@ export default function MonitorHeader({
             priority
           />
         </Link>
-        <label className={styles.box}>
-          <span className={styles.boxLabel}>Date</span>
-          <input
-            type="date"
-            className={styles.dateInput}
-            value={date}
-            max={maxDate}
-            onChange={(e) => onDateChange(e.target.value)}
-          />
-        </label>
+        <DateBox date={date} onChange={onDateChange} max={maxDate} />
       </div>
 
       {/* Tengah: panah pindah dashboard + judul */}
@@ -132,31 +106,14 @@ export default function MonitorHeader({
         {extra && <div className={styles.extra}>{extra}</div>}
       </div>
 
-      {/* Kanan: tombol PMC + jam + pilih shift */}
+      {/* Kanan: tombol PMC + jam + shift + user */}
       <div className={styles.right}>
         <Link href="/pmc" className={styles.pmc}>
           PMC
         </Link>
-
-        <div className={`${styles.box} ${styles.timeBox}`} role="timer" aria-label="Waktu sekarang (WIB)">
-          <span className={styles.boxLabel}>Time</span>
-          <span className={styles.time}>{clock ?? "--.--.--"}</span>
-        </div>
-
-        <label className={styles.box}>
-          <span className={styles.boxLabel}>Select Shift</span>
-          <select
-            className={styles.select}
-            value={shift}
-            onChange={(e) => onShiftChange(e.target.value)}
-          >
-            {shiftOptions.map((s) => (
-              <option key={s.value} value={s.value}>
-                {s.label}
-              </option>
-            ))}
-          </select>
-        </label>
+        <TimeBox />
+        <ShiftBox shift={shift} onChange={onShiftChange} options={shiftOptions} />
+        {user && <UserStatus user={user} />}
       </div>
     </header>
   );
