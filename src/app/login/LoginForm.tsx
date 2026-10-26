@@ -6,8 +6,9 @@ import Image from "next/image";
 import logo from "@/assets/logo-perusahaan.webp";
 import styles from "./login.module.css";
 
-const DEFAULT_REDIRECT = "/";
+const DEFAULT_REDIRECT = "/pmc";
 
+/** Hanya izinkan path internal ("/xxx"), tolak URL eksternal seperti "//evil.com". */
 function safeRedirect(value: string | null): string {
   if (value && value.startsWith("/") && !value.startsWith("//")) return value;
   return DEFAULT_REDIRECT;
