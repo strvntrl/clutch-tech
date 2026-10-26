@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { roleLabel } from "@/lib/roles";
 
 interface Props {
   fullName: string;
@@ -19,7 +20,7 @@ export default function UserBar({ fullName, role }: Props) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 13 }}>
       <span>
-        <strong>{fullName}</strong> <span style={{ color: "#777" }}>({role})</span>
+        <strong>{fullName}</strong> <span style={{ color: "#777" }}>({roleLabel(role)})</span>
       </span>
       <button
         onClick={handleLogout}

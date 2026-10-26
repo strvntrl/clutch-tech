@@ -1,9 +1,9 @@
-export type PmcLevel = "foreman" | "supervisor" | "manager";
+export type PmcLevel = "foreman" | "supervisor" | "ast_manager";
 
 export const PMC_LEVELS: { level: PmcLevel; label: string }[] = [
   { level: "foreman", label: "FOREMAN" },
   { level: "supervisor", label: "SUPERVISOR" },
-  { level: "manager", label: "manager" },
+  { level: "ast_manager", label: "AST. MANAGER" },
 ];
 
 /** Opsi kolom keterangan per mesin (sama dengan form PHP). */

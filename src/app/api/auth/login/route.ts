@@ -1,19 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { dbSelect } from "@/lib/db";
 import { verifyPassword } from "@/lib/password";
-import {
-  signSessionToken,
-  SESSION_COOKIE_NAME,
-  SESSION_MAX_AGE,
-  type UserRole,
-} from "@/lib/session";
+import { signSessionToken, SESSION_COOKIE_NAME, SESSION_MAX_AGE } from "@/lib/session";
+import { normalizeRole } from "@/lib/roles";
 
 interface UserRow {
   user_id: number;
   username: string;
   password_hash: string;
   full_name: string;
-  role: UserRole;
+  role: string;
   is_active: boolean;
 }
 
@@ -58,16 +54,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ status: false, error: genericError }, { status: 401 });
     }
 
+    const role = normalizeRole(user.role);
+
     const token = await signSessionToken({
       userId: user.user_id,
       username: user.username,
       fullName: user.full_name,
-      role: user.role,
+      role,
     });
 
     const res = NextResponse.json({
       status: true,
-      user: { username: user.username, fullName: user.full_name, role: user.role },
+      user: { username: user.username, fullName: user.full_name, role },
     });
 
     res.cookies.set(SESSION_COOKIE_NAME, token, {

@@ -2,16 +2,16 @@ import "server-only";
 import { NextResponse } from "next/server";
 import { dbSelect } from "@/lib/db";
 import { getCurrentUser } from "@/lib/get-current-user";
-import type { UserRole } from "@/lib/session";
+import { normalizeRole, type UserRole } from "@/lib/roles";
 import type { ShiftWindow } from "@/lib/shift";
 import type { PmcLevel, PmcPermissions } from "@/types/pmc";
 
-export const PRIVILEGED_ROLES: UserRole[] = ["supervisor", "manager"];
+export const PRIVILEGED_ROLES: UserRole[] = ["supervisor", "ast_manager"];
 
 export const LEVEL_ROLE: Record<PmcLevel, UserRole> = {
   foreman: "foreman",
   supervisor: "supervisor",
-  "manager": "manager",
+  ast_manager: "ast_manager",
 };
 
 export const EDIT_TOLERANCE_SEC = 30 * 60;
@@ -47,7 +47,7 @@ export async function requireUser(): Promise<AuthUser> {
   const session = await getCurrentUser();
   if (!session) throw new HttpError(401, "Belum login");
 
-  const rows = await dbSelect<{ username: string; full_name: string; role: UserRole; is_active: boolean }>(
+  const rows = await dbSelect<{ username: string; full_name: string; role: string; is_active: boolean }>(
     `SELECT username, full_name, role, is_active FROM app_user WHERE user_id = $1`,
     [session.userId]
   );
@@ -57,7 +57,7 @@ export async function requireUser(): Promise<AuthUser> {
     userId: session.userId,
     username: rows[0].username,
     fullName: rows[0].full_name,
-    role: rows[0].role,
+    role: normalizeRole(rows[0].role),
   };
 }
 
@@ -77,7 +77,7 @@ export function computePermissions(role: UserRole, win: ShiftWindow, now: number
     canEdit = true;
   } else {
     reason =
-      "Shift ini sudah berakhir. Hanya Supervisor / manager yang dapat mengubah data shift lampau.";
+      "Shift ini sudah berakhir. Hanya Supervisor / Ast. Manager yang dapat mengubah data shift lampau.";
   }
 
   const canApprove = {} as Record<PmcLevel, boolean>;

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { errorResponse, HttpError, requireUser } from "@/lib/pmc/common";
 import { setApproval } from "@/lib/pmc/hotpress";
 
-/** POST /api/pmc/hotpress/approve  body: { date, shift, level: "foreman"|"supervisor"|"manager", value: boolean } */
+/** POST /api/pmc/hotpress/approve  body: { date, shift, level: "foreman"|"supervisor"|"ast_manager", value: boolean } */
 export async function POST(request: NextRequest) {
   try {
     const user = await requireUser();

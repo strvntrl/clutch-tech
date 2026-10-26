@@ -1,11 +1,12 @@
 import { SignJWT, jwtVerify } from "jose";
+import { normalizeRole, type UserRole } from "@/lib/roles";
+
+export type { UserRole };
 
 const SESSION_DURATION_SECONDS = 60 * 60 * 12; // 12 jam, cover 1 shift penuh
 
 export const SESSION_COOKIE_NAME = "ct_session";
 export const SESSION_MAX_AGE = SESSION_DURATION_SECONDS;
-
-export type UserRole = "operator" | "foreman" | "supervisor" | "manager";
 
 export interface SessionPayload {
   userId: number;
@@ -33,7 +34,9 @@ export async function signSessionToken(payload: SessionPayload): Promise<string>
 export async function verifySessionToken(token: string): Promise<SessionPayload | null> {
   try {
     const { payload } = await jwtVerify(token, getSecretKey());
-    return payload as unknown as SessionPayload;
+    const session = payload as unknown as SessionPayload;
+    // Sesi lama bisa menyimpan role dengan penulisan lain (mis. "manager")
+    return { ...session, role: normalizeRole(session.role) };
   } catch {
     return null;
   }

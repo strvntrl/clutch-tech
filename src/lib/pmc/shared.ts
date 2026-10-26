@@ -5,6 +5,7 @@ import { getShiftWindow, normalizeShiftCode, type ShiftWindow } from "@/lib/shif
 import { fmtDateTime, isValidDateStr, nowWallEpoch } from "@/lib/time";
 import type { PmcLevel } from "@/types/pmc";
 import { HttpError, LEVEL_ROLE, computePermissions, type AuthUser } from "./common";
+import { ROLE_LABEL } from "@/lib/roles";
 
 /** Helper PMC yang dipakai bersama oleh form selain Drilling (Hotpress, dst.). */
 
@@ -83,7 +84,7 @@ export async function ensureAndLockEntry(
 const APPROVE_COLUMN: Record<PmcLevel, string> = {
   foreman: "approve_foreman",
   supervisor: "approve_supervisor",
-  "manager": "approve_manager",
+  ast_manager: "approve_manager",
 };
 
 /**
@@ -99,14 +100,14 @@ export async function setApprovalFor(
   level: unknown,
   value: unknown
 ): Promise<Record<PmcLevel, boolean>> {
-  if (level !== "foreman" && level !== "supervisor" && level !== "manager") {
+  if (level !== "foreman" && level !== "supervisor" && level !== "ast_manager") {
     throw new HttpError(400, "Tingkat approval tidak valid");
   }
   if (typeof value !== "boolean") throw new HttpError(400, "Nilai approval tidak valid");
 
   const win = await resolveWindow(date, shiftRaw);
   if (user.role !== LEVEL_ROLE[level]) {
-    throw new HttpError(403, `Approval tingkat ini hanya untuk role ${LEVEL_ROLE[level]}.`);
+    throw new HttpError(403, `Approval tingkat ini hanya untuk role ${ROLE_LABEL[LEVEL_ROLE[level]]}.`);
   }
   const now = nowWallEpoch();
   if (!computePermissions(user.role, win, now).canApprove[level]) {
@@ -135,7 +136,7 @@ export async function setApprovalFor(
     return {
       foreman: !!row.approve_foreman,
       supervisor: !!row.approve_supervisor,
-      "manager": !!row.approve_manager,
+      ast_manager: !!row.approve_manager,
     };
   });
 }

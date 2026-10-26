@@ -192,7 +192,7 @@ export async function loadForm(user: AuthUser, date: string, shiftRaw: string): 
     approve: {
       foreman: !!entry?.approve_foreman,
       supervisor: !!entry?.approve_supervisor,
-      "manager": !!entry?.approve_manager,
+      ast_manager: !!entry?.approve_manager,
     },
     iot: await iotCounts(win, stations),
     operators,
@@ -345,7 +345,7 @@ export async function saveRows(user: AuthUser, date: string, shiftRaw: string, r
       const ex = existing.get(r.row_no);
 
       if (ex?.is_checked && !perms.canEditLocked) {
-        rowErrors[r.row_no] = "Baris sudah divalidasi dan terkunci. Hanya Supervisor / manager yang dapat mengubahnya.";
+        rowErrors[r.row_no] = "Baris sudah divalidasi dan terkunci. Hanya Supervisor / Ast. Manager yang dapat mengubahnya.";
         continue;
       }
       if (r.validated && (!r.part_number || !r.operator || r.actual <= 0)) {
@@ -449,7 +449,7 @@ export async function saveRows(user: AuthUser, date: string, shiftRaw: string, r
 const APPROVE_COLUMN: Record<PmcLevel, string> = {
   foreman: "approve_foreman",
   supervisor: "approve_supervisor",
-  "manager": "approve_manager",
+  ast_manager: "approve_manager",
 };
 
 export async function setApproval(
@@ -459,7 +459,7 @@ export async function setApproval(
   level: unknown,
   value: unknown
 ): Promise<Record<PmcLevel, boolean>> {
-  if (level !== "foreman" && level !== "supervisor" && level !== "manager") {
+  if (level !== "foreman" && level !== "supervisor" && level !== "ast_manager") {
     throw new HttpError(400, "Tingkat approval tidak valid");
   }
   if (typeof value !== "boolean") throw new HttpError(400, "Nilai approval tidak valid");
@@ -495,7 +495,7 @@ export async function setApproval(
     return {
       foreman: !!row.approve_foreman,
       supervisor: !!row.approve_supervisor,
-      "manager": !!row.approve_manager,
+      ast_manager: !!row.approve_manager,
     };
   });
 }

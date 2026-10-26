@@ -120,7 +120,7 @@ export async function loadForm(user: AuthUser, date: string, shiftRaw: string): 
     approve: {
       foreman: !!entry?.approve_foreman,
       supervisor: !!entry?.approve_supervisor,
-      "manager": !!entry?.approve_manager,
+      ast_manager: !!entry?.approve_manager,
     },
     operators,
     machines,
@@ -271,7 +271,7 @@ export async function saveRows(
   const perms = computePermissions(user.role, win, now);
   if (!perms.canEdit) throw new HttpError(403, perms.reason ?? "Anda tidak boleh mengubah data ini");
   if (target !== undefined && !perms.canEditLocked) {
-    throw new HttpError(403, "Target per shift hanya dapat diubah oleh Supervisor / manager.");
+    throw new HttpError(403, "Target per shift hanya dapat diubah oleh Supervisor / Ast. Manager.");
   }
 
   const nowStr = fmtDateTime(now);
@@ -294,7 +294,7 @@ export async function saveRows(
       const ex = existing.get(r.row_no);
 
       if (ex?.is_checked && !perms.canEditLocked) {
-        rowErrors[r.row_no] = "Baris sudah divalidasi dan terkunci. Hanya Supervisor / manager yang dapat mengubahnya.";
+        rowErrors[r.row_no] = "Baris sudah divalidasi dan terkunci. Hanya Supervisor / Ast. Manager yang dapat mengubahnya.";
         continue;
       }
       if (r.validated && (!r.cf_no || !r.operator || r.baik <= 0)) {

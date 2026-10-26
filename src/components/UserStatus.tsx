@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { roleLabel } from "@/lib/roles";
 import monitor from "./MonitorHeader.module.css";
 import styles from "./UserStatus.module.css";
 
@@ -35,7 +36,7 @@ export default function UserStatus({
   return (
     <div className={`${styles.group} ${className}`}>
       <div className={`${monitor.box} ${styles.userBox}`}>
-        <span className={monitor.boxLabel}>{user.role}</span>
+        <span className={monitor.boxLabel}>{roleLabel(user.role)}</span>
         <span className={styles.userName} title={user.fullName}>
           {user.fullName}
         </span>
